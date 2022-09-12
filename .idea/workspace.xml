@@ -8,16 +8,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1df9557d-dd18-4095-bafe-9d3179835e89" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cebu.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/Syntax.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/front.rs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/syntax/exprs.rs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/syntax/mod.rs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/syntax/stmts.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/Examples/Hello/Hello.cebu" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/Primitives.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/front.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/front.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/syntax/stmts.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/syntax/stmts.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,7 +50,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
-    "settings.editor.selected.configurable": "editor.preferences.fonts.default"
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
 }]]></component>
   <component name="RunManager">

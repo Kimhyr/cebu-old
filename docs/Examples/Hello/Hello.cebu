@@ -1,0 +1,22 @@
+use Standard.{
+    Program,
+    System.Console,
+};
+
+struct Hello: Program {
+    proc Init(args: Array<String>): Result<{}, Error> {
+        dat message: String;
+        if args.Count > 0 {
+            message = "Hello, ".Append(args[0].Append('!'));
+        } else {
+            ret Error(Error.ArgsCount);
+        }
+
+        Console.Write(message);
+        ret Ok({});
+    }
+}
+
+enum ProgramError {
+    ArgsCount = "The args count is too low."
+}
