@@ -27,8 +27,8 @@ fn main() {
                 Ok(lexer) => {
                     loop {
                         match lexer.get_next_token() {
-                            Ok(t) => { println!("{:?}", t) },
-                            Err(e) => { break },
+                            Ok(t) => println!("{:?}", t),
+                            Err(e) => { println!("{:?}", e); break; },
                         }
                     }
                 },

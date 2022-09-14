@@ -1,3 +1,5 @@
+use std::path::Path;
+
 use crate::syntax::token::{Token, LiteralToken, KeywordToken, BinaryToken};
 
 pub struct Lexer<'a> {
@@ -8,21 +10,21 @@ pub struct Lexer<'a> {
 }
 
 impl<'a> Lexer<'a> {
-    pub fn new(src: &'a str) -> Result<Self, ()> {
+    pub fn new(src: &'a str) -> Result<Self, LexerError> {
         Ok(Self {
             src,
             cur_pos: 0,
             cur_char: match src.chars().nth(0) {
                 Some(c) => c,
-                None => return Err(()),
+                None => return Err(LexerError::EmptySource),
             },
             is_done: false
         })
     }
 
-    pub fn get_next_token(&mut self) -> Result<Token, ()> {
+    pub fn get_next_token(&mut self) -> Result<Token, LexerError> {
         if self.is_done {
-            return Err(());
+            return Err(LexerError::Done);
         }
 
         while self.cur_char.is_whitespace() {
@@ -65,7 +67,7 @@ impl<'a> Lexer<'a> {
             '=' => Ok(Token::Binary(BinaryToken::Equal)),
             '+' => Ok(Token::Binary(BinaryToken::Plus)),
             ';' => Ok(Token::Binary(BinaryToken::Semicolon)),
-            _ => Err(()),
+            _ => Err(LexerError::UnknownSymbol),
         }
     }
 
@@ -82,8 +84,15 @@ impl<'a> Lexer<'a> {
     }
 }
 
-pub enum LexerError {
+#[derive(Debug)]
+pub enum LexerError{
     Done,               // The lexer has no more characters to work with.
-    Empty,              // The source has no characters to initialize the lexer.
+    EmptySource,        // The source has no characters to initialize the lexer.
     UnknownSymbol,      // The scanned characters could not parse into a token.
 }
+
+// pub struct Position<'a> {
+//     path: &'a Path,
+//     row: usize,
+//     column: usize,
+// }
