@@ -1,5 +1,6 @@
 mod syntax;
 mod front;
+mod preproc;
 
 use std::{
     fs::File,
@@ -7,6 +8,8 @@ use std::{
     path::Path,
 };
 
+use front::Lexer;
+use syntax::token::Token;
 
 fn main() {
     let path = Path::new("D:\\Projects\\cebu\\tests\\basic.cebu");
@@ -18,13 +21,19 @@ fn main() {
 
     let mut src = String::new();
     match file.read_to_string(&mut src) {
-        Err(why) => panic!("Could not read {}: {}", display, why),
+        Err(why) => panic!("Could not read {}:\n{}", display, why),
         Ok(_) => {
-            compile(src.as_str());
+            match &mut Lexer::new(src.as_str()) {
+                Ok(lexer) => {
+                    loop {
+                        match lexer.get_next_token() {
+                            Ok(t) => { println!("{:?}", t) },
+                            Err(e) => { break },
+                        }
+                    }
+                },
+                Err(_) => todo!(),
+            }
         }
     }
-}
-
-fn compile<'a>(src: &'a str) {
-
 }

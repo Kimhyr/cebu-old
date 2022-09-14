@@ -1,3 +1,7 @@
+use std::path::Path;
+
+
+#[derive(Debug)]
 pub enum Token {
     Identifier(String),
     Keyword(KeywordToken),
@@ -7,12 +11,15 @@ pub enum Token {
     Literal(LiteralToken),
 }
 
+#[derive(Debug)]
 pub enum LiteralToken {
     Bool(bool),
+    Char(char),
     String(String),
     Integer(String),
 }
 
+#[derive(Debug)]
 pub enum DelimiterToken {
     LCurl,
     RCurl,
@@ -22,11 +29,13 @@ pub enum DelimiterToken {
     RBrack,
 }
 
+#[derive(Debug)]
 pub enum UnaryToken {
     Astrix,
     Amper,
 }
 
+#[derive(Debug)]
 pub enum BinaryToken {
     Colon,
     Semicolon,
@@ -37,6 +46,7 @@ pub enum BinaryToken {
     Multiply,
 }
 
+#[derive(Debug)]
 pub enum KeywordToken {
     Dat,
     Proc,

@@ -1,106 +1,89 @@
-use std::{str::EncodeUtf16, fmt::Error};
-
-use crate::syntax::token::{Token, KeywordToken, LiteralToken, BinaryToken};
+use crate::syntax::token::{Token, LiteralToken, KeywordToken, BinaryToken};
 
 pub struct Lexer<'a> {
     src: &'a str,
     cur_pos: usize,
     cur_char: char,
+    is_done: bool,
 }
 
 impl<'a> Lexer<'a> {
-    pub fn new(src: &'a str) -> Result<Self, LexerError> {
+    pub fn new(src: &'a str) -> Result<Self, ()> {
         Ok(Self {
             src,
-            cur_pos: src.len(),
+            cur_pos: 0,
             cur_char: match src.chars().nth(0) {
                 Some(c) => c,
-                None => return Err(LexerError::Nothing),
-            }
+                None => return Err(()),
+            },
+            is_done: false
         })
     }
 
-    fn next(&mut self) -> Result<Token, LexerError> {
+    pub fn get_next_token(&mut self) -> Result<Token, ()> {
+        if self.is_done {
+            return Err(());
+        }
+
         while self.cur_char.is_whitespace() {
-            if !self.advance() {
-                return Err(LexerError::End);
-            }
+            self.advance();
         }
 
         if self.cur_char.is_alphabetic() {
-            let mut t_str = String::new();
-            while self.advance() &&
-                self.cur_char.is_alphabetic() ||
-                self.cur_char.is_numeric() {
+            let mut t_str = String::from(self.cur_char);
+            while !self.is_done {
+                self.advance();
+                if !self.cur_char.is_alphabetic() && !self.cur_char.is_numeric() {
+                    break;
+                }
                 t_str.push(self.cur_char);
             }
 
             match t_str.as_str() {
-                "dat" => {
-                    return Ok(Token::Keyword(
-                        KeywordToken::Dat
-                    ))
-                },
-                "proc" => {
-                    return Ok(Token::Keyword(
-                        KeywordToken::Proc
-                    ))
-                },
-                _ => {
-                    return Ok(Token::Identifier(t_str))
-                }
+                "dat" => { return Ok(Token::Keyword(KeywordToken::Dat)) }
+                _ => { return Ok(Token::Identifier(t_str)) }
             }
         }
+
 
         if self.cur_char.is_numeric() {
-            let mut t_str = String::new();
-            while self.advance() &&
-                self.cur_char.is_numeric() {
+            let mut t_str = String::from(self.cur_char);
+            while !self.is_done {
+                self.advance();
+                if !self.cur_char.is_numeric() {
+                    break;
+                }
                 t_str.push(self.cur_char);
             }
-
-            return Ok(Token::Literal(
-                LiteralToken::Integer(t_str)
-            ));
+            return Ok(Token::Literal(LiteralToken::Integer(t_str)));
         }
 
-        match self.cur_char {
-            ':' => {
-                return Ok(Token::Binary(
-                    BinaryToken::Colon
-                ))
-            }
-            ';' => {
-                return Ok(Token::Binary(
-                    BinaryToken::Semicolon
-                ))
-            }
-            '=' => {
-                return Ok(Token::Binary(
-                    BinaryToken::Equal
-                ))
-            }
-            '+' => {
-                return Ok(Token::Binary(
-                    BinaryToken::Plus
-                ))
-            }
-            _ => { return Err(LexerError::Unknown); }
+        let c = self.cur_char;
+        self.advance();
+        match c {
+            ':' => Ok(Token::Binary(BinaryToken::Colon)),
+            '=' => Ok(Token::Binary(BinaryToken::Equal)),
+            '+' => Ok(Token::Binary(BinaryToken::Plus)),
+            ';' => Ok(Token::Binary(BinaryToken::Semicolon)),
+            _ => Err(()),
         }
     }
 
-    fn advance(&mut self) -> bool {
+    fn advance(&mut self) {
         self.cur_pos += 1;
         match self.src.chars().nth(self.cur_pos) {
-            Some(c) => self.cur_char = c,
-            None => return false,
+            Some(c) => {
+                self.cur_char = c;
+            },
+            None => {
+                self.is_done = true;
+            }
         }
-        true
     }
 }
 
 pub enum LexerError {
-    Nothing,
-    End,
-    Unknown,
+    Done,               // The lexer has no more characters to work with.
+    Empty,              // The source has no characters to initialize the lexer.
+    UnknownSymbol,      // The scanned characters could not parse into a token.
 }
