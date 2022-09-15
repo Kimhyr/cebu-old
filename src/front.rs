@@ -1,5 +1,3 @@
-use std::path::Path;
-
 use crate::syntax::token::{Token, LiteralToken, KeywordToken, BinaryToken};
 
 pub struct Lexer<'a> {
@@ -28,13 +26,13 @@ impl<'a> Lexer<'a> {
         }
 
         while self.cur_char.is_whitespace() {
-            self.advance();
+            self.next_char();
         }
 
         if self.cur_char.is_alphabetic() {
             let mut t_str = String::from(self.cur_char);
             while !self.is_done {
-                self.advance();
+                self.next_char();
                 if !self.cur_char.is_alphabetic() && !self.cur_char.is_numeric() {
                     break;
                 }
@@ -51,7 +49,7 @@ impl<'a> Lexer<'a> {
         if self.cur_char.is_numeric() {
             let mut t_str = String::from(self.cur_char);
             while !self.is_done {
-                self.advance();
+                self.next_char();
                 if !self.cur_char.is_numeric() {
                     break;
                 }
@@ -61,17 +59,17 @@ impl<'a> Lexer<'a> {
         }
 
         let c = self.cur_char;
-        self.advance();
+        self.next_char();
         match c {
             ':' => Ok(Token::Binary(BinaryToken::Colon)),
             '=' => Ok(Token::Binary(BinaryToken::Equal)),
             '+' => Ok(Token::Binary(BinaryToken::Plus)),
             ';' => Ok(Token::Binary(BinaryToken::Semicolon)),
-            _ => Err(LexerError::UnknownSymbol),
+            _ => Err(LexerError::UnkownToken),
         }
     }
 
-    fn advance(&mut self) {
+    fn next_char(&mut self) {
         self.cur_pos += 1;
         match self.src.chars().nth(self.cur_pos) {
             Some(c) => {
@@ -85,10 +83,10 @@ impl<'a> Lexer<'a> {
 }
 
 #[derive(Debug)]
-pub enum LexerError{
-    Done,               // The lexer has no more characters to work with.
+pub enum LexerError {
+    Done,               // The lexer has no more characters to scan.
     EmptySource,        // The source has no characters to initialize the lexer.
-    UnknownSymbol,      // The scanned characters could not parse into a token.
+    UnkownToken,        // The scanned characters could not parse into a known token.
 }
 
 // pub struct Position<'a> {

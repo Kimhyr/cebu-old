@@ -9,7 +9,6 @@ use std::{
 };
 
 use front::Lexer;
-use syntax::token::Token;
 
 fn main() {
     let path = Path::new("D:\\Projects\\cebu\\tests\\basic.cebu");
