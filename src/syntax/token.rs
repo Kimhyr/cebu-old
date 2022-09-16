@@ -37,6 +37,7 @@ pub enum UnaryToken {
 
 #[derive(Debug)]
 pub enum BinaryToken {
+    Period,
     Colon,
     Semicolon,
     Equal,

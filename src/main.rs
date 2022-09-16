@@ -1,4 +1,5 @@
 mod syntax;
+mod error;
 mod front;
 mod preproc;
 

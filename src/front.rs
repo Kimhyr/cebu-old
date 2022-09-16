@@ -1,4 +1,91 @@
-use crate::syntax::token::{Token, LiteralToken, KeywordToken, BinaryToken};
+use crate::{syntax::{token::{Token, LiteralToken, KeywordToken, BinaryToken}, stmts::{Stmt, DatStmt}, exprs::{Expr, PathExpr, IdExpr, LiteralExpr}}, error::LexerError};
+
+pub struct Parser<'a> {
+    lexer: Lexer<'a>
+}
+
+impl<'a> Parser<'a> {
+    pub fn new(lexer: Lexer<'a>) -> Self {
+        Self {
+            lexer
+        }
+    }
+
+    pub fn parse(&mut self) {
+        match self.lexer.get_next_token() {
+            Ok(tk) => {
+                match tk {
+                    Token::Keyword(kw) => {
+                        match kw {
+                            KeywordToken::Dat => {
+                                self.parse_dat_stmt();
+                            },
+                            KeywordToken::Proc => todo!(),
+                        }
+                    },
+                    _ => {},
+                }
+            },
+            Err(e) => todo!(),
+        }
+    }
+
+    fn parse_dat_stmt(&mut self) {
+        // let buf: (IdExpr, PathExpr, Box<dyn Expr>);
+    }
+
+    fn parse_id_expr(&mut self) -> Result<IdExpr, ()> {
+        match self.lexer.get_next_token() {
+            Ok(tk) => {
+                match tk {
+                    Token::Identifier(id) => {
+                        return Ok(IdExpr::new(id));
+                    },
+                    _ => {}
+                }
+            },
+            Err(e) => todo!(),
+        }
+        Err(())
+    }
+
+    fn parse_path_expr(&mut self) -> Result<PathExpr, ()> {
+        let mut buf = Vec::<IdExpr>::new();
+        loop {
+            if let Ok(id) = self.parse_id_expr() {
+                buf.push(id);
+            }
+
+            if let Ok(tk) = self.lexer.get_next_token() {
+                if let Token::Binary(bi) = tk {
+                    match bi {
+                        BinaryToken::Period => { continue; },
+                        _ => { return Ok(PathExpr::new(buf)); }
+                    }
+                }
+            }
+        }
+    }
+
+    fn parse_literal_expr(&mut self) -> Result<LiteralExpr, ()> {
+        match self.lexer.get_next_token() {
+            Ok(tk) => {
+                if let Token::Literal(lit) = tk {
+                    match lit {
+                        _ => { return Ok(LiteralExpr::new(lit)); }
+                    }
+                }
+            },
+            Err(_) => return Err(()),
+        }
+
+        Err(())
+    }
+
+    fn parse_binary_expr(&mut self) {
+
+    }
+}
 
 pub struct Lexer<'a> {
     src: &'a str,
@@ -80,13 +167,6 @@ impl<'a> Lexer<'a> {
             }
         }
     }
-}
-
-#[derive(Debug)]
-pub enum LexerError {
-    Done,               // The lexer has no more characters to scan.
-    EmptySource,        // The source has no characters to initialize the lexer.
-    UnkownToken,        // The scanned characters could not parse into a known token.
 }
 
 // pub struct Position<'a> {
